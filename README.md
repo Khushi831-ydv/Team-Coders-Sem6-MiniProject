@@ -1,6 +1,7 @@
-# Team-Coders-Sem6-MiniProject
+# Team Coders MiniProject 
 
-This is Team Coders mini-project repository for Semester 6 . 
+## PROJECT TITLE : 
+GreenAudit : Campus Sustainability & Carbon Tracker
 
 ## TEAM DETAILS :
 
