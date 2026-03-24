@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraAudit | Campus Earth-Sourced Sustainability</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
+        body { font-family: 'Lexend', sans-serif; }
+        
+        /* Custom Brown Palette */
+        .bg-earth-900 { background-color: #3d2b1f; } /* Dark Espresso */
+        .bg-earth-800 { background-color: #5d4037; } /* Coffee */
+        .bg-earth-100 { background-color: #efebe9; } /* Soft Sand */
+        .text-earth-900 { color: #3d2b1f; }
+        .border-earth-200 { border-color: #d7ccc8; }
+        .accent-terracotta { color: #a1887f; }
+    </style>
+</head>
+<body class="bg-[#F9F7F5] text-stone-800">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar: Deep Espresso -->
+        <aside class="w-72 bg-earth-900 text-stone-100 hidden lg:flex flex-col shadow-2xl">
+            <div class="p-8">
+                <div class="flex items-center gap-3 text-amber-200 font-bold text-2xl tracking-tight">
+                    <div class="bg-amber-200 p-1.5 rounded-lg">
+                        <i data-lucide="mountain" class="text-earth-900"></i>
+                    </div>
+                    <span>TerraAudit</span>
+                </div>
+            </div>
+            
+            <nav class="flex-1 px-6 space-y-1">
+                <p class="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-bold mb-4 ml-4">Main Navigation</p>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white border border-white/10 shadow-lg">
+                    <i data-lucide="layout-grid" size="18"></i> Overview
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-400 hover:bg-white/5 hover:text-white transition">
+                    <i data-lucide="flame" size="18"></i> Energy Load
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-400 hover:bg-white/5 hover:text-white transition">
+                    <i data-lucide="waves" size="18"></i> Hydration Systems
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-400 hover:bg-white/5 hover:text-white transition">
+                    <i data-lucide="shovels" size="18"></i> Waste & Compost
+                </a>
+            </nav>
+
+            <div class="m-6 p-5 bg-stone-800/50 rounded-2xl border border-white/5">
+                <h4 class="text-xs font-bold text-amber-100 uppercase mb-2">Campus Soil Health</h4>
+                <div class="flex justify-between text-xs mb-2">
+                    <span>Regeneration Goal</span>
+                    <span class="text-amber-200">84%</span>
+                </div>
+                <div class="w-full bg-stone-700 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-amber-200 h-full w-[84%]"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white/80 backdrop-blur-md border-b border-earth-200 h-20 flex items-center justify-between px-10 sticky top-0 z-20">
+                <div class="flex flex-col">
+                    <h1 class="text-xl font-bold text-earth-900">Environmental Dashboard</h1>
+                    <p class="text-xs text-stone-500">Global Campus Stats • Last synced 2m ago</p>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex bg-earth-100 rounded-full px-4 py-2 gap-4">
+                        <div class="flex items-center gap-2 text-xs font-semibold text-earth-800">
+                            <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span> Systems Live
+                        </div>
+                    </div>
+                    <button class="bg-earth-800 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-earth-900 transition shadow-lg shadow-earth-900/20">
+                        Export Audit
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="p-10 space-y-10">
+                
+                <!-- Large Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Energy Card -->
+                    <div class="bg-white p-8 rounded-[2rem] border border-earth-200 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+                        <div class="absolute -right-4 -top-4 text-earth-100 transform group-hover:scale-110 transition-transform">
+                            <i data-lucide="zap" size="120"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <p class="text-stone-500 text-sm font-medium uppercase tracking-widest">Energy Usage</p>
+                            <h2 class="text-4xl font-bold text-earth-900 mt-2">52.4 <span class="text-lg font-light">MW</span></h2>
+                            <div class="mt-4 flex items-center gap-2 text-emerald-600 font-bold text-sm bg-emerald-50 w-fit px-3 py-1 rounded-full">
+                                <i data-lucide="trending-down" size="14"></i> 4.2% Saving
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Water Card -->
+                    <div class="bg-white p-8 rounded-[2rem] border border-earth-200 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+                        <div class="absolute -right-4 -top-4 text-earth-100 transform group-hover:scale-110 transition-transform">
+                            <i data-lucide="droplet" size="120"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <p class="text-stone-500 text-sm font-medium uppercase tracking-widest">Water Flow</p>
+                            <h2 class="text-4xl font-bold text-earth-900 mt-2">18.1 <span class="text-lg font-light">kL</span></h2>
+                            <div class="mt-4 flex items-center gap-2 text-stone-400 font-bold text-sm bg-stone-50 w-fit px-3 py-1 rounded-full">
+                                <i data-lucide="minus" size="14"></i> Stable
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carbon Card -->
+                    <div class="bg-earth-800 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 text-white/5 transform group-hover:scale-110 transition-transform">
+                            <i data-lucide="wind" size="120"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <p class="text-amber-100/60 text-sm font-medium uppercase tracking-widest">Carbon Impact</p>
+                            <h2 class="text-4xl font-bold text-white mt-2">124.8 <span class="text-lg font-light">tCO2</span></h2>
+                            <div class="mt-4 flex items-center gap-2 text-amber-200 font-bold text-sm bg-white/10 w-fit px-3 py-1 rounded-full">
+                                <i data-lucide="arrow-down" size="14"></i> High Efficiency
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart & Task Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <!-- Chart Panel -->
+                    <div class="lg:col-span-3 bg-white p-8 rounded-[2rem] border border-earth-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-10">
+                            <h3 class="text-xl font-bold text-earth-900">Campus Footprint Trend</h3>
+                            <select class="bg-earth-100 text-earth-800 text-xs font-bold px-4 py-2 rounded-full border-none outline-none">
+                                <option>Yearly View (2024)</option>
+                                <option>Last Quarter</option>
+                            </select>
+                        </div>
+                        <div class="h-80">
+                            <canvas id="terraChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Remediation Tasks -->
+                    <div class="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-earth-200 shadow-sm">
+                        <h3 class="text-xl font-bold text-earth-900 mb-6">Urgent Remediation</h3>
+                        <div class="space-y-4">
+                            <!-- Task 1 -->
+                            <div class="group flex items-center gap-4 p-4 rounded-2xl hover:bg-earth-100 transition cursor-pointer border border-transparent hover:border-earth-200">
+                                <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="alert-triangle"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-bold text-earth-900">Science Block Leak</h4>
+                                    <p class="text-xs text-stone-500">Flow detected in West Wing restroom after hours.</p>
+                                </div>
+                                <i data-lucide="chevron-right" size="16" class="text-stone-300"></i>
+                            </div>
+
+                            <!-- Task 2 -->
+                            <div class="group flex items-center gap-4 p-4 rounded-2xl hover:bg-earth-100 transition cursor-pointer border border-transparent hover:border-earth-200">
+                                <div class="w-12 h-12 bg-stone-100 text-stone-700 rounded-xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="lightbulb"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-bold text-earth-900">Optimization Task</h4>
+                                    <p class="text-xs text-stone-500">Schedule HVAC cleaning for Library Building.</p>
+                                </div>
+                                <i data-lucide="chevron-right" size="16" class="text-stone-300"></i>
+                            </div>
+
+                            <button class="w-full mt-6 py-4 bg-earth-100 text-earth-800 text-sm font-bold rounded-2xl hover:bg-earth-200 transition uppercase tracking-widest">
+                                View Maintenance Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Terra-Themed Chart Logic
+        const ctx = document.getElementById('terraChart').getContext('2d');
+        
+        // Create Gradient
+        const brownGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        brownGradient.addColorStop(0, 'rgba(93, 64, 55, 0.4)');
+        brownGradient.addColorStop(1, 'rgba(239, 235, 233, 0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                datasets: [{
+                    label: 'Campus Carbon Index',
+                    data: [65, 59, 80, 81, 56, 55, 40, 38],
+                    borderColor: '#5d4037',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#5d4037',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    fill: true,
+                    backgroundColor: brownGradient,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        display: false,
+                        beginAtZero: true 
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#a1887f', font: { weight: 'bold' } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
