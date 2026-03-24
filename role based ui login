@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraAudit | Multi-Role Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
+        body { font-family: 'Lexend', sans-serif; transition: all 0.3s ease; }
+        .role-content { display: none; }
+        .role-active { display: block; }
+        .card-brown { background: white; border: 1px solid #d7ccc8; border-radius: 1.5rem; transition: transform 0.2s; }
+        .card-brown:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(61, 43, 31, 0.1); }
+    </style>
+</head>
+<body class="bg-[#FBF9F7] text-stone-800">
+
+    <!-- Role Switcher (For Demo Purposes) -->
+    <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-earth-900 bg-stone-900 text-white px-2 py-2 rounded-full shadow-2xl flex gap-2 border border-stone-700">
+        <button onclick="setRole('admin')" id="btn-admin" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-amber-600 text-white">ADMIN</button>
+        <button onclick="setRole('staff')" id="btn-staff" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all text-stone-400 hover:text-white">STAFF</button>
+        <button onclick="setRole('student')" id="btn-student" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all text-stone-400 hover:text-white">STUDENT</button>
+    </div>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#3d2b1f] text-stone-200 hidden lg:flex flex-col border-r border-stone-800">
+            <div class="p-8">
+                <div class="flex items-center gap-2 text-amber-200 font-bold text-xl">
+                    <i data-lucide="mountain"></i> TerraAudit
+                </div>
+            </div>
+            <nav class="flex-1 px-4 space-y-2" id="sidebar-nav">
+                <!-- Nav items change based on role via JS -->
+            </nav>
+            <div class="p-6 border-t border-stone-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center text-stone-900 font-bold" id="user-avatar">A</div>
+                    <div>
+                        <p class="text-sm font-bold" id="user-name">Admin User</p>
+                        <p class="text-[10px] text-stone-500 uppercase tracking-widest" id="user-role-label">Management</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 pt-20 lg:pt-8">
+            
+            <!-- ADMIN VIEW -->
+            <section id="view-admin" class="role-content role-active space-y-8">
+                <header>
+                    <h2 class="text-3xl font-bold text-stone-900">Executive Overview</h2>
+                    <p class="text-stone-500">Global sustainability metrics & financial impact.</p>
+                </header>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card-brown p-6">
+                        <p class="text-stone-500 text-xs font-bold uppercase tracking-widest">Total Carbon Cost</p>
+                        <h3 class="text-3xl font-bold text-stone-900 mt-2">$42,850 <span class="text-sm font-normal text-red-500">+2%</span></h3>
+                    </div>
+                    <div class="card-brown p-6">
+                        <p class="text-stone-500 text-xs font-bold uppercase tracking-widest">Campus Footprint</p>
+                        <h3 class="text-3xl font-bold text-stone-900 mt-2">1,240 <span class="text-sm font-normal text-stone-400">tCO2</span></h3>
+                    </div>
+                    <div class="card-brown p-6 bg-stone-900 text-white border-none">
+                        <p class="text-stone-400 text-xs font-bold uppercase tracking-widest">Global Rank</p>
+                        <h3 class="text-3xl font-bold text-amber-200 mt-2">#12 <span class="text-sm font-normal text-stone-400">/ 200</span></h3>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[2rem] border border-stone-200 shadow-sm">
+                    <h4 class="font-bold mb-6">Carbon Reduction Strategy</h4>
+                    <div class="h-64"><canvas id="adminChart"></canvas></div>
+                </div>
+            </section>
+
+            <!-- STAFF VIEW -->
+            <section id="view-staff" class="role-content space-y-8">
+                <header>
+                    <h2 class="text-3xl font-bold text-stone-900">Operations & Maintenance</h2>
+                    <p class="text-stone-500">Live sensor data and urgent repair tasks.</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="card-brown p-8 border-l-8 border-l-amber-600">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-amber-900">Urgent: Abnormal Water Flow</h4>
+                            <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-1 rounded-full font-bold">CRITICAL</span>
+                        </div>
+                        <p class="text-sm text-stone-600 mt-2">Engineering Block C, Room 402. Flow rate 4x normal. Potential pipe burst.</p>
+                        <button class="mt-4 text-xs font-bold text-stone-900 underline underline-offset-4">ASSIGN TECHNICIAN</button>
+                    </div>
+
+                    <div class="card-brown p-8">
+                        <h4 class="font-bold mb-4">Sensor Health Status</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm"><span>Energy Meters</span><span class="text-emerald-600 font-bold italic">Online</span></div>
+                            <div class="flex justify-between text-sm"><span>Water Valves</span><span class="text-amber-600 font-bold italic">2 Offline</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-brown p-8">
+                    <h4 class="font-bold mb-4">Building-wise Efficiency</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="border-b border-stone-100 text-stone-400 uppercase text-[10px] tracking-widest">
+                                <tr><th class="pb-3">Building</th><th class="pb-3">Power</th><th class="pb-3">Status</th></tr>
+                            </thead>
+                            <tbody class="text-stone-700">
+                                <tr><td class="py-3">Main Library</td><td class="py-3">12.4 kW</td><td><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs">Optimal</span></td></tr>
+                                <tr><td class="py-3">Science Wing B</td><td class="py-3">44.1 kW</td><td><span class="bg-stone-100 text-stone-800 px-2 py-0.5 rounded text-xs">High Load</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STUDENT VIEW -->
+            <section id="view-student" class="role-content space-y-8">
+                <header>
+                    <h2 class="text-3xl font-bold text-stone-900">My Eco-Impact</h2>
+                    <p class="text-stone-500">Compete with your dorm and earn sustainability badges.</p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gradient-to-br from-[#5d4037] to-[#3d2b1f] p-8 rounded-[2rem] text-white">
+                        <p class="text-stone-400 text-xs font-bold uppercase tracking-widest">My Personal Saving</p>
+                        <h3 class="text-5xl font-bold text-amber-200 mt-2">14.5 <span class="text-lg">kg CO2</span></h3>
+                        <p class="text-xs mt-4 text-stone-300 italic">Equivalent to planting 2 trees this semester!</p>
+                    </div>
+
+                    <div class="card-brown p-8">
+                        <h4 class="font-bold mb-4">Dorm Leaderboard</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-stone-400 w-4">1</span>
+                                <div class="flex-1 bg-stone-100 h-8 rounded-lg relative overflow-hidden">
+                                    <div class="bg-amber-600 h-full w-[90%] flex items-center px-3 text-white text-[10px] font-bold">TERRA HALL</div>
+                                </div>
+                                <span class="text-xs font-bold">2.4k pts</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-stone-400 w-4">2</span>
+                                <div class="flex-1 bg-stone-100 h-8 rounded-lg relative overflow-hidden">
+                                    <div class="bg-[#8d6e63] h-full w-[75%] flex items-center px-3 text-white text-[10px] font-bold">OAK RIDGE</div>
+                                </div>
+                                <span class="text-xs font-bold">1.8k pts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-white border border-stone-200 rounded-2xl text-center">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mx-auto mb-2"><i data-lucide="award"></i></div>
+                        <p class="text-[10px] font-bold uppercase">Zero Waste Hero</p>
+                    </div>
+                    <div class="p-4 bg-white border border-stone-200 rounded-2xl text-center grayscale opacity-50">
+                        <div class="w-12 h-12 bg-stone-100 text-stone-700 rounded-full flex items-center justify-center mx-auto mb-2"><i data-lucide="droplet"></i></div>
+                        <p class="text-[10px] font-bold uppercase">Water Saver</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function setRole(role) {
+            // Hide all views
+            document.querySelectorAll('.role-content').forEach(v => v.classList.remove('role-active'));
+            document.querySelectorAll('.role-content').forEach(v => v.style.display = 'none');
+            
+            // UI updates
+            const sidebar = document.getElementById('sidebar-nav');
+            const userName = document.getElementById('user-name');
+            const userRoleLabel = document.getElementById('user-role-label');
+            const userAvatar = document.getElementById('user-avatar');
+            
+            // Update Active Button
+            document.querySelectorAll('[id^="btn-"]').forEach(b => {
+                b.classList.remove('bg-amber-600', 'text-white');
+                b.classList.add('text-stone-400');
+            });
+            document.getElementById('btn-' + role).classList.add('bg-amber-600', 'text-white');
+            document.getElementById('btn-' + role).classList.remove('text-stone-400');
+
+            // Set specific content
+            if(role === 'admin') {
+                document.getElementById('view-admin').style.display = 'block';
+                userName.innerText = "Dr. Aris Thorne";
+                userRoleLabel.innerText = "University Dean";
+                userAvatar.innerText = "AT";
+                sidebar.innerHTML = `
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white"><i data-lucide="layout-dashboard" size="18"></i> Campus Overview</a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-stone-400"><i data-lucide="file-text" size="18"></i> Annual Reports</a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-stone-400"><i data-lucide="settings" size="18"></i> Policy Config</a>
+                `;
+            } else if(role === 'staff') {
+                document.getElementById('view-staff').style.display = 'block';
+                userName.innerText = "Marcus Vane";
+                userRoleLabel.innerText = "Facilities Manager";
+                userAvatar.innerText = "MV";
+                sidebar.innerHTML = `
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white"><i data-lucide="activity" size="18"></i> Live Sensors</a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-stone-400"><i data-lucide="wrench" size="18"></i> Work Orders</a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-stone-400"><i data-lucide="map" size="18"></i> Grid Map</a>
+                `;
+            } else {
+                document.getElementById('view-student').style.display = 'block';
+                userName.innerText = "Leo Sterling";
+                userRoleLabel.innerText = "Undergrad Student";
+                userAvatar.innerText = "LS";
+                sidebar.innerHTML = `
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white"><i data-lucide="user" size="18"></i> My Profile</a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-stone-400"><i data-lucide="trophy" size="18"></i> Leaderboards</a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-stone-400"><i data-lucide="lightbulb" size="18"></i> Eco Tips</a>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        // Initialize Admin Chart
+        const ctx = document.getElementById('adminChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Engineering', 'Science', 'Arts', 'Sports', 'Housing'],
+                datasets: [{
+                    label: 'Carbon Consumption',
+                    data: [450, 380, 120, 290, 510],
+                    backgroundColor: '#8d6e63',
+                    borderRadius: 10
+                }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        // Default to admin
+        setRole('admin');
+    </script>
+</body>
+</html>
