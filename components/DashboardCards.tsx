@@ -74,5 +74,5 @@ export const DashboardCards: React.FC = () => {
         color="bg-emerald-500"
       />
     </div>
-  );
+  ); 
 };
