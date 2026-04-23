@@ -65,7 +65,7 @@ const FloatingChatbot: React.FC = () => {
 
     try {
       const reply = await getCampusAssistantReply(trimmed);
-      const assistantMsg: ChatMessage = { id: `assistant-${Date.now()}`, role: "assistant", text: reply.text, images: reply.images, createdAt: new Date().toISOString() };
+      const assistantMsg: ChatMessage = { id: `assistant-${Date.now()}`, role: "assistant", text: reply.text, images: reply.images, sourceLink: reply.sourceLink, createdAt: new Date().toISOString() };
       setMessages((prev) => [...prev, assistantMsg]);
       speakText(reply.text);
     } catch {
@@ -112,10 +112,21 @@ const FloatingChatbot: React.FC = () => {
                 <div style={{ maxWidth: "85%", background: msg.role === "user" ? "#10b981" : "#ffffff", color: msg.role === "user" ? "#ffffff" : "#0f172a", padding: "12px", borderRadius: "14px", boxShadow: "0 2px 10px rgba(0,0,0,0.06)" }}>
                   <div style={{ whiteSpace: "pre-wrap", fontSize: "14px", lineHeight: 1.5 }}>{msg.text}</div>
                   {msg.images.length > 0 && (
-                    <div style={{ marginTop: "10px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
-                      {msg.images.map((img, i) => (
-                        <img key={i} src={img} alt="Campus visual" style={{ width: "100%", height: "100px", objectFit: "cover", borderRadius: "10px", border: "1px solid #e2e8f0" }} />
-                      ))}
+                    <div style={{ marginTop: "10px" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
+                        {msg.images.map((img, i) => (
+                          <img key={i} src={img} alt="Campus visual" style={{ width: "100%", height: "100px", objectFit: "cover", borderRadius: "10px", border: "1px solid #e2e8f0" }} />
+                        ))}
+                      </div>
+                      {msg.sourceLink && (
+                        <a href={msg.sourceLink} target="_blank" rel="noopener noreferrer"
+                          style={{ display: "inline-flex", alignItems: "center", gap: "5px", marginTop: "8px", fontSize: "11px", fontWeight: 700, color: "#059669", textDecoration: "none", background: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "8px", padding: "5px 10px" }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                          </svg>
+                          View K.R. Mangalam Source Report
+                        </a>
+                      )}
                     </div>
                   )}
                 </div>

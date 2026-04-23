@@ -36,6 +36,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   images: string[];
+  sourceLink?: string;
   createdAt: string;
 }
 

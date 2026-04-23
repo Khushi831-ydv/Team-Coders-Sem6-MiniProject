@@ -26,10 +26,16 @@ const solarKeywords = ["solar", "solar panel", "panels", "renewable", "energy", 
 const wasteKeywords = ["waste", "trash", "garbage", "bin", "overflow", "recycle"];
 const waterKeywords = ["water", "leak", "pipe", "pipeline", "tank", "drain", "drainage"];
 
-export function findRelevantImages(query: string): string[] {
+export function detectTopic(query: string): 'solar' | 'waste' | 'water' | null {
   const lower = query.toLowerCase();
-  if (solarKeywords.some((k) => lower.includes(k))) return chatbotImageMap.solar.slice(0, 3);
-  if (wasteKeywords.some((k) => lower.includes(k))) return chatbotImageMap.waste.slice(0, 3);
-  if (waterKeywords.some((k) => lower.includes(k))) return chatbotImageMap.water.slice(0, 3);
-  return [];
+  if (solarKeywords.some((k) => lower.includes(k))) return 'solar';
+  if (wasteKeywords.some((k) => lower.includes(k))) return 'waste';
+  if (waterKeywords.some((k) => lower.includes(k))) return 'water';
+  return null;
+}
+
+export function findRelevantImages(query: string): string[] {
+  const topic = detectTopic(query);
+  if (!topic) return [];
+  return chatbotImageMap[topic].slice(0, 3);
 }
