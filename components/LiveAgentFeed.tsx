@@ -4,6 +4,13 @@ import { Cpu, Zap, Droplets, Trash2, ShieldCheck, Terminal, AlertTriangle } from
 import { motion, AnimatePresence } from 'motion/react';
 import { Ticket } from '../types';
 
+const FALLBACK = [
+  { id: 'f1', icon: Zap,           color: 'text-amber-500',   bg: 'bg-amber-50',    title: 'HVAC Optimization',  location: 'Science Block B', action: 'Reducing load by 15% based on occupancy sensors.', severity: 'Medium', status: 'In Progress', created_at: new Date(Date.now() - 2 * 60000).toISOString() },
+  { id: 'f2', icon: Droplets,      color: 'text-blue-500',    bg: 'bg-blue-50',     title: 'Leak Detection',     location: 'Dorm 4',          action: 'Pressure anomaly detected. Autonomous shutoff valve engaged.', severity: 'High', status: 'Acknowledged', created_at: new Date(Date.now() - 15 * 60000).toISOString() },
+  { id: 'f3', icon: Trash2,        color: 'text-emerald-500', bg: 'bg-emerald-50',  title: 'Route Optimization', location: 'Waste Bay C',     action: 'Waste collection rerouted to high-capacity organic bins.', severity: 'Low', status: 'Resolved', created_at: new Date(Date.now() - 40 * 60000).toISOString() },
+  { id: 'f4', icon: ShieldCheck,   color: 'text-indigo-500',  bg: 'bg-indigo-50',   title: 'System Integrity',   location: 'Campus-wide',     action: 'Safety protocols verified. All autonomous actions within ESG bounds.', severity: 'Low', status: 'Resolved', created_at: new Date(Date.now() - 60 * 60000).toISOString() },
+];
+
 const ISSUE_CONFIG = {
   Water:       { icon: Droplets,      color: 'text-blue-500',    bg: 'bg-blue-50',    action: 'Autonomous shutoff valve alert triggered. Maintenance team notified.' },
   Electricity: { icon: Zap,           color: 'text-amber-500',   bg: 'bg-amber-50',   action: 'Grid load isolation initiated. Electrical safety check dispatched.' },
@@ -28,8 +35,13 @@ function timeAgo(iso: string) {
 const LiveAgentFeed: React.FC<{ isAgenticMode: boolean; tickets: Ticket[] }> = ({ isAgenticMode, tickets }) => {
   if (!isAgenticMode) return null;
 
-  // Most recent 4 tickets as agent decisions; pad with fallback if fewer
-  const recentTickets = [...tickets].slice(0, 4);
+  const ticketDecisions = [...tickets].slice(0, 4).map(t => {
+    const cfg = ISSUE_CONFIG[t.issue_type];
+    return { id: String(t.id), icon: cfg.icon, color: cfg.color, bg: cfg.bg, title: `${t.issue_type} Issue`, location: t.location || 'Campus', action: cfg.action, severity: t.severity, status: t.status, created_at: t.created_at };
+  });
+  const recentTickets = ticketDecisions.length > 0
+    ? [...ticketDecisions, ...FALLBACK].slice(0, 4)
+    : FALLBACK;
 
   return (
     <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm h-full flex flex-col">
@@ -74,37 +86,36 @@ const LiveAgentFeed: React.FC<{ isAgenticMode: boolean; tickets: Ticket[] }> = (
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
-            {recentTickets.map((ticket) => {
-              const cfg = ISSUE_CONFIG[ticket.issue_type];
-              const Icon = cfg.icon;
+            {recentTickets.map((item) => {
+              const Icon = item.icon;
               return (
                 <motion.div
-                  key={ticket.id}
+                  key={item.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="flex gap-3 p-4 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:shadow-md transition-all duration-300 bg-slate-50/50"
                 >
-                  <div className={`${cfg.bg} p-2.5 rounded-xl h-fit flex-shrink-0`}>
-                    <Icon className={`w-4 h-4 ${cfg.color}`} />
+                  <div className={`${item.bg} p-2.5 rounded-xl h-fit flex-shrink-0`}>
+                    <Icon className={`w-4 h-4 ${item.color}`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-0.5">
                       <h4 className="text-sm font-bold text-slate-900 truncate">
-                        {ticket.issue_type} Issue — {ticket.location || 'Campus'}
+                        {item.title} — {item.location}
                       </h4>
-                      <span className="text-[10px] text-slate-400 font-medium ml-2 flex-shrink-0">{timeAgo(ticket.created_at)}</span>
+                      <span className="text-[10px] text-slate-400 font-medium ml-2 flex-shrink-0">{timeAgo(item.created_at)}</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mb-1.5">{cfg.action}</p>
+                    <p className="text-[11px] text-slate-500 mb-1.5">{item.action}</p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">
-                        {SEVERITY_LABEL[ticket.severity]}
+                        {SEVERITY_LABEL[item.severity]}
                       </span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        ticket.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' :
-                        ticket.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
+                        item.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' :
+                        item.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
                         'bg-rose-100 text-rose-700'
-                      }`}>{ticket.status}</span>
+                      }`}>{item.status}</span>
                     </div>
                   </div>
                 </motion.div>
