@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Cpu, Zap, Droplets, Trash2, ShieldCheck, Terminal, AlertTriangle } from 'lucide-react';
+import { Cpu, Zap, Droplets, Trash2, ShieldCheck, Terminal, AlertTriangle, Sun } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Ticket } from '../types';
 
@@ -9,6 +9,7 @@ const FALLBACK = [
   { id: 'f2', icon: Droplets,      color: 'text-blue-500',    bg: 'bg-blue-50',     title: 'Leak Detection',     location: 'Dorm 4',          action: 'Pressure anomaly detected. Autonomous shutoff valve engaged.', severity: 'High', status: 'Acknowledged', created_at: new Date(Date.now() - 15 * 60000).toISOString() },
   { id: 'f3', icon: Trash2,        color: 'text-emerald-500', bg: 'bg-emerald-50',  title: 'Route Optimization', location: 'Waste Bay C',     action: 'Waste collection rerouted to high-capacity organic bins.', severity: 'Low', status: 'Resolved', created_at: new Date(Date.now() - 40 * 60000).toISOString() },
   { id: 'f4', icon: ShieldCheck,   color: 'text-indigo-500',  bg: 'bg-indigo-50',   title: 'System Integrity',   location: 'Campus-wide',     action: 'Safety protocols verified. All autonomous actions within ESG bounds.', severity: 'Low', status: 'Resolved', created_at: new Date(Date.now() - 60 * 60000).toISOString() },
+  { id: 'f5', icon: Sun,           color: 'text-yellow-500',  bg: 'bg-yellow-50',   title: 'Solar Panel Fault',  location: 'Rooftop Block A', action: 'Output drop detected on panel grid. Cleaning cycle and inspection dispatched.', severity: 'Medium', status: 'Acknowledged', created_at: new Date(Date.now() - 90 * 60000).toISOString() },
 ];
 
 const ISSUE_CONFIG = {
