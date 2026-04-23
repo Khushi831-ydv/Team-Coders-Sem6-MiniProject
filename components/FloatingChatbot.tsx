@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MessageCircle, Mic, Send, Volume2, X } from "lucide-react";
+import { MessageCircle, Mic, Send, Volume2, X, Maximize2, Minimize2 } from "lucide-react";
 import { ChatMessage } from "../types";
 import { getCampusAssistantReply } from "../services/chatbotService";
 
@@ -12,6 +12,7 @@ declare global {
 
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -88,7 +89,7 @@ const FloatingChatbot: React.FC = () => {
       )}
 
       {isOpen && (
-        <div style={{ position: "fixed", right: "24px", bottom: "24px", width: "380px", maxWidth: "calc(100vw - 32px)", height: "560px", background: "#ffffff", borderRadius: "20px", boxShadow: "0 20px 50px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 9999, display: "flex", flexDirection: "column", border: "1px solid #e2e8f0" }}>
+        <div style={{ position: "fixed", right: "24px", bottom: "24px", width: expanded ? "680px" : "380px", maxWidth: "calc(100vw - 32px)", height: expanded ? "80vh" : "560px", background: "#ffffff", borderRadius: "20px", boxShadow: "0 20px 50px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 9999, display: "flex", flexDirection: "column", border: "1px solid #e2e8f0", transition: "width 0.3s ease, height 0.3s ease" }}>
           {/* Header */}
           <div style={{ padding: "16px", background: "linear-gradient(135deg, #0f172a, #1e293b)", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
@@ -98,6 +99,9 @@ const FloatingChatbot: React.FC = () => {
             <div style={{ display: "flex", gap: "8px" }}>
               <button onClick={() => setVoiceEnabled((p) => !p)} title="Toggle voice output" style={{ background: voiceEnabled ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)", color: "#fff", border: "none", borderRadius: "10px", width: "36px", height: "36px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Volume2 size={18} />
+              </button>
+              <button onClick={() => setExpanded((p) => !p)} title={expanded ? "Collapse" : "Expand"} style={{ background: "rgba(255,255,255,0.12)", color: "#fff", border: "none", borderRadius: "10px", width: "36px", height: "36px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {expanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
               <button onClick={() => setIsOpen(false)} title="Close" style={{ background: "rgba(255,255,255,0.12)", color: "#fff", border: "none", borderRadius: "10px", width: "36px", height: "36px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <X size={18} />
