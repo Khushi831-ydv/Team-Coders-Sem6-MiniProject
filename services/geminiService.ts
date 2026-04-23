@@ -1,114 +1,50 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
 import { DataPoint, BuildingData } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
-export const getSustainabilityInsights = async (data: DataPoint[], buildings: BuildingData[]) => {
-  const prompt = `
-    Analyze this campus sustainability data:
-    Historical Trends: ${JSON.stringify(data.slice(-3))}
-    Building Breakdown: ${JSON.stringify(buildings)}
-
-    Identify the top 3 critical areas for improvement and provide actionable sustainability recommendations. 
-    Focus on Carbon Footprint, Energy, and Water.
-  `;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            insights: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  category: { type: Type.STRING },
-                  observation: { type: Type.STRING },
-                  recommendation: { type: Type.STRING },
-                  estimatedImpact: { type: Type.STRING },
-                  priority: { type: Type.STRING, enum: ['High', 'Medium', 'Low'] }
-                },
-                required: ['category', 'observation', 'recommendation', 'estimatedImpact', 'priority']
-              }
-            }
-          },
-          required: ['insights']
-        }
-      }
-    });
-
-    return JSON.parse(response.text).insights;
-  } catch (error) {
-    console.error("Gemini Insights Error:", error);
-    return [];
-  }
+export const getSustainabilityInsights = async (_data: DataPoint[], _buildings: BuildingData[]) => {
+  return [
+    {
+      category: 'Energy',
+      observation: 'Science Labs consume 18,200 kWh/month — 39% of total campus energy — with an efficiency score of only 62%.',
+      recommendation: 'Install occupancy-based lighting controls and upgrade lab HVAC scheduling in Science Labs.',
+      estimatedImpact: '~18% energy reduction, saving ₹1.6L/year',
+      priority: 'High' as const,
+    },
+    {
+      category: 'Carbon',
+      observation: 'Campus emits ~642 kgCO₂/month. Dec–Jan peak is 44% above the June low due to heating loads.',
+      recommendation: 'Deploy smart thermostats with AI scheduling to cut winter heating demand by 12%.',
+      estimatedImpact: '~76 kgCO₂/month reduction, advancing Net Zero by 0.8 years',
+      priority: 'High' as const,
+    },
+    {
+      category: 'Water',
+      observation: 'Student Dorms use 15,000 L/month — highest of all buildings — yet have the best efficiency score (84%).',
+      recommendation: 'Add low-flow fixtures and greywater recycling in dorms to maintain efficiency while cutting usage.',
+      estimatedImpact: '~22% water savings, ₹40K/year cost reduction',
+      priority: 'Medium' as const,
+    },
+  ];
 };
 
-export const getAgenticRAGInsights = async (data: DataPoint[], buildings: BuildingData[]) => {
-  const prompt = `
-    As an Autonomous Sustainability Agent, analyze this campus data in the context of global sustainability goals:
-    Historical Trends: ${JSON.stringify(data.slice(-3))}
-    Building Breakdown: ${JSON.stringify(buildings)}
-
-    Using the provided URL context (UN Sustainable Development Goals), identify how this campus can align its autonomous resource orchestration with global standards.
-    Provide 3 high-level agentic strategies.
-  `;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      config: {
-        tools: [{ urlContext: { } }],
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            strategies: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  title: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                  alignment: { type: Type.STRING, description: "How this aligns with UN SDGs" },
-                  agentAction: { type: Type.STRING, description: "The autonomous action the agent will take" }
-                },
-                required: ['title', 'description', 'alignment', 'agentAction']
-              }
-            }
-          },
-          required: ['strategies']
-        }
-      },
-      // Providing the UN SDGs URL as context
-      contents: [
-        { parts: [{ text: "https://sdgs.un.org/goals" }] },
-        { parts: [{ text: prompt }] }
-      ]
-    } as any); // Using any because urlContext might not be fully typed in the SDK version
-
-    return JSON.parse(response.text).strategies;
-  } catch (error) {
-    console.error("Gemini RAG Error:", error);
-    return [
-      {
-        title: "Autonomous Grid Balancing",
-        description: "Aligning campus energy consumption with real-time renewable availability.",
-        alignment: "SDG 7: Affordable and Clean Energy",
-        agentAction: "Agent will autonomously throttle non-critical HVAC loads during low solar output periods."
-      },
-      {
-        title: "Circular Waste Orchestration",
-        description: "Automating the lifecycle of campus materials to ensure zero-waste-to-landfill.",
-        alignment: "SDG 12: Responsible Consumption and Production",
-        agentAction: "Agent will trigger autonomous collection alerts when recycling bins reach 80% capacity."
-      }
-    ];
-  }
+export const getAgenticRAGInsights = async (_data: DataPoint[], _buildings: BuildingData[]) => {
+  return [
+    {
+      title: 'Autonomous Grid Balancing',
+      description: 'Aligning campus energy consumption with real-time renewable availability using predictive load shifting.',
+      alignment: 'SDG 7: Affordable and Clean Energy',
+      agentAction: 'Agent will autonomously throttle non-critical HVAC loads during low solar output periods.',
+    },
+    {
+      title: 'Circular Waste Orchestration',
+      description: 'Automating the lifecycle of campus materials to ensure zero-waste-to-landfill outcomes.',
+      alignment: 'SDG 12: Responsible Consumption and Production',
+      agentAction: 'Agent triggers autonomous collection alerts when recycling bins reach 80% capacity.',
+    },
+    {
+      title: 'Carbon-Aware Scheduling',
+      description: 'Shifting high-energy lab operations to off-peak hours when grid carbon intensity is lowest.',
+      alignment: 'SDG 13: Climate Action',
+      agentAction: 'Agent reschedules non-urgent lab equipment cycles to 02:00–06:00 low-carbon windows.',
+    },
+  ];
 };

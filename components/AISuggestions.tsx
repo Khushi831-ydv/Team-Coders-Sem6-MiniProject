@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSustainabilityInsights, getAgenticRAGInsights } from '../services/geminiService';
 import { INITIAL_DATA, BUILDING_STATS } from '../constants';
-import { Sparkles, AlertCircle, CheckCircle2, ArrowRight, Bot, Zap, ShieldCheck, RefreshCw, Globe, Cpu } from 'lucide-react';
+import { Sparkles, CheckCircle2, ArrowRight, Bot, Zap, ShieldCheck, RefreshCw, Globe, Cpu } from 'lucide-react';
 
 interface Insight {
   category: string;
@@ -28,7 +28,7 @@ const AISuggestions: React.FC<AISuggestionsProps> = ({ isAgenticMode = false }) 
   const [ragStrategies, setRagStrategies] = useState<RAGStrategy[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAutopilotOn, setIsAutopilotOn] = useState(false);
-  const [agentLogs, setAgentLogs] = useState([
+  const [agentLogs] = useState([
     { id: 1, action: 'Optimized HVAC in Sci-Block', time: '2m ago', result: '-12% Load' },
     { id: 2, action: 'Rerouted Solar to Dorms', time: '15m ago', result: 'Grid Offset' },
   ]);
@@ -160,7 +160,7 @@ const AISuggestions: React.FC<AISuggestionsProps> = ({ isAgenticMode = false }) 
         </div>
       )}
 
-      {/* Standard Insights */}
+      {/* Standard Insights — horizontal row */}
       <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-purple-100 p-2 rounded-xl">
@@ -169,16 +169,16 @@ const AISuggestions: React.FC<AISuggestionsProps> = ({ isAgenticMode = false }) 
           <h3 className="text-lg font-bold text-slate-900">AI Advisor</h3>
         </div>
 
-        <div className="grid gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {insights.map((insight, idx) => (
-            <div 
-              key={idx} 
-              className="group relative overflow-hidden bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:bg-white hover:border-emerald-200 transition-all duration-300"
+            <div
+              key={idx}
+              className="group relative overflow-hidden bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:bg-white hover:border-emerald-200 hover:shadow-md transition-all duration-300 flex flex-col"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider ${
-                    insight.priority === 'High' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'
+                    insight.priority === 'High' ? 'bg-rose-100 text-rose-600' : insight.priority === 'Medium' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'
                   }`}>
                     {insight.priority}
                   </span>
@@ -186,10 +186,10 @@ const AISuggestions: React.FC<AISuggestionsProps> = ({ isAgenticMode = false }) 
                 </div>
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              
+
               <h4 className="text-slate-900 font-bold text-sm mb-1 leading-tight">{insight.recommendation}</h4>
-              <p className="text-slate-500 text-[11px] mb-3 line-clamp-2">{insight.observation}</p>
-              
+              <p className="text-slate-500 text-[11px] mb-3 leading-relaxed flex-1">{insight.observation}</p>
+
               <div className="flex items-center justify-between pt-3 border-t border-slate-200 border-dashed">
                 <span className="text-[10px] font-bold text-emerald-700">Impact: {insight.estimatedImpact}</span>
                 <button className="text-[10px] font-bold text-slate-800 flex items-center gap-1 group-hover:text-emerald-600 transition-colors">

@@ -48,6 +48,7 @@ export async function createTicket(data: TicketCreateRequest): Promise<Ticket> {
     description: data.description || '',
     location:    data.location    || '',
     created_at:  new Date().toISOString(),
+    created_by:  data.created_by  || 'anonymous',
   };
   save([ticket, ...tickets]);
   return ticket;
@@ -55,6 +56,10 @@ export async function createTicket(data: TicketCreateRequest): Promise<Ticket> {
 
 export async function fetchTickets(): Promise<Ticket[]> {
   return load();
+}
+
+export async function deleteTicket(id: number): Promise<void> {
+  save(load().filter(t => t.id !== id));
 }
 
 export async function updateTicket(

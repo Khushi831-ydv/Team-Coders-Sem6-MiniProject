@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { LayoutDashboard, Zap, Droplets, TrendingUp, Settings, Leaf, BarChart3 } from 'lucide-react';
-import { DashboardView } from '../types';
+import { LayoutDashboard, Zap, Droplets, TrendingUp, Settings, Leaf, BarChart3, LogOut, User } from 'lucide-react';
+import { DashboardView, UserRole, AuthUser } from '../types';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,16 +8,43 @@ interface LayoutProps {
   setActiveView: (view: DashboardView) => void;
   isAgenticMode: boolean;
   setIsAgenticMode: (mode: boolean) => void;
+  user: AuthUser;
+  onLogout: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, isAgenticMode, setIsAgenticMode }) => {
-  const navItems = [
-    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-    { id: 'energy', label: 'Energy Analysis', icon: Zap },
-    { id: 'water-waste', label: 'Water & Waste', icon: Droplets },
-    { id: 'predictions', label: 'AI Predictions', icon: TrendingUp },
-    { id: 'admin', label: 'Admin Panel', icon: Settings },
-  ] as const;
+const ALL_NAV_ITEMS = [
+  { id: 'overview',    label: 'Overview',       icon: LayoutDashboard, roles: ['student','faculty','admin'] },
+  { id: 'energy',      label: 'Energy Analysis', icon: Zap,             roles: ['faculty','admin'] },
+  { id: 'water-waste', label: 'Water & Waste',   icon: Droplets,        roles: ['faculty','admin'] },
+  { id: 'predictions', label: 'AI Predictions',  icon: TrendingUp,      roles: ['faculty','admin'] },
+  { id: 'admin',       label: 'Admin Panel',     icon: Settings,        roles: ['admin'] },
+] as const;
+
+const ROLE_LABELS: Record<UserRole, string> = {
+  student: 'Student',
+  faculty: 'Faculty',
+  admin: 'Administrator',
+};
+
+const ROLE_COLORS: Record<UserRole, string> = {
+  student: 'bg-blue-100 text-blue-700',
+  faculty: 'bg-amber-100 text-amber-700',
+  admin: 'bg-emerald-100 text-emerald-700',
+};
+
+const Layout: React.FC<LayoutProps> = ({
+  children, activeView, setActiveView,
+  isAgenticMode, setIsAgenticMode,
+  user, onLogout
+}) => {
+  const navItems = ALL_NAV_ITEMS.filter(item =>
+    (item.roles as readonly string[]).includes(user.role)
+  );
+
+  React.useEffect(() => {
+    const accessible = navItems.some(i => i.id === activeView);
+    if (!accessible) setActiveView('overview');
+  }, [user.role]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -49,31 +75,33 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, is
         </nav>
 
         <div className="p-4 space-y-4 border-t border-slate-100">
-          <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-4 text-white shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <div className="bg-white/20 p-1.5 rounded-lg">
-                  <BarChart3 className="w-4 h-4 text-white" />
+          {(user.role === 'admin' || user.role === 'faculty') && (
+            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-4 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="bg-white/20 p-1.5 rounded-lg">
+                    <BarChart3 className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider">Agentic Mode</span>
                 </div>
-                <span className="text-xs font-bold uppercase tracking-wider">Agentic Mode</span>
+                <button
+                  onClick={() => setIsAgenticMode(!isAgenticMode)}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                    isAgenticMode ? 'bg-emerald-400' : 'bg-white/20'
+                  }`}
+                >
+                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                    isAgenticMode ? 'translate-x-5' : 'translate-x-1'
+                  }`} />
+                </button>
               </div>
-              <button 
-                onClick={() => setIsAgenticMode(!isAgenticMode)}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-                  isAgenticMode ? 'bg-emerald-400' : 'bg-white/20'
-                }`}
-              >
-                <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                  isAgenticMode ? 'translate-x-5' : 'translate-x-1'
-                }`} />
-              </button>
+              <p className="text-[10px] text-indigo-100 leading-tight">
+                {isAgenticMode
+                  ? 'Autonomous AI Agents are actively orchestrating campus resources.'
+                  : 'Switch to enable autonomous AI reasoning and RAG-driven insights.'}
+              </p>
             </div>
-            <p className="text-[10px] text-indigo-100 leading-tight">
-              {isAgenticMode 
-                ? 'Autonomous AI Agents are actively orchestrating campus resources.' 
-                : 'Switch to enable autonomous AI reasoning and RAG-driven insights.'}
-            </p>
-          </div>
+          )}
 
           <div className="bg-slate-900 rounded-2xl p-4 text-white">
             <div className="flex items-center gap-2 mb-2">
@@ -85,28 +113,37 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, is
               <div className="bg-emerald-400 h-1.5 rounded-full" style={{ width: '84%' }}></div>
             </div>
           </div>
+
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 text-sm font-medium"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main content */}
       <main className="flex-1 overflow-y-auto">
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-800">
             {navItems.find(i => i.id === activeView)?.label || 'Dashboard'}
           </h2>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${ROLE_COLORS[user.role]}`}>
+              {ROLE_LABELS[user.role]}
+            </span>
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-slate-900">Khushi Yadav</p>
-              <p className="text-xs text-slate-500">Admin</p>
+              <p className="text-sm font-semibold text-slate-900 truncate max-w-[160px]">{user.email}</p>
+              <p className="text-xs text-slate-500">{ROLE_LABELS[user.role]}</p>
             </div>
-            <img
-              src="https://picsum.photos/seed/admin/100/100"
-              alt="User"
-              className="w-10 h-10 rounded-full ring-2 ring-emerald-100"
-            />
+            <div className="w-10 h-10 rounded-full ring-2 ring-emerald-100 bg-emerald-500 flex items-center justify-center">
+              <User className="w-5 h-5 text-white" />
+            </div>
           </div>
         </header>
-        
+
         <div className="p-8 max-w-7xl mx-auto">
           {children}
         </div>

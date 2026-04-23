@@ -29,6 +29,13 @@ export interface SustainabilityReport {
 
 export type DashboardView = 'overview' | 'energy' | 'water-waste' | 'predictions' | 'admin';
 
+export type UserRole = 'student' | 'faculty' | 'admin';
+
+export interface AuthUser {
+  email: string;
+  role: UserRole;
+}
+
 export type EcoSnapIssueType = 'Leak' | 'Lights ON waste' | 'Broken panel' | 'Waste overflow';
 export type EcoSnapSeverity  = 'Low' | 'Medium' | 'High' | 'Critical';
 
@@ -57,6 +64,7 @@ export interface TicketCreateRequest {
   image: File;
   location?: string;
   description?: string;
+  created_by?: string;
 }
 
 export interface Ticket {
@@ -68,4 +76,5 @@ export interface Ticket {
   description: string;
   location: string;
   created_at: string;
+  created_by: string;
 }

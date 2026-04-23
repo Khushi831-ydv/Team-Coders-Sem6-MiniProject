@@ -4,9 +4,10 @@ import { Ticket } from "../types";
 
 type Props = {
   onTicketCreated: (ticket: Ticket) => void;
+  userEmail: string;
 };
 
-const EcoSnap: React.FC<Props> = ({ onTicketCreated }) => {
+const EcoSnap: React.FC<Props> = ({ onTicketCreated, userEmail }) => {
   const [image, setImage] = useState<File | null>(null);
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
@@ -32,6 +33,7 @@ const EcoSnap: React.FC<Props> = ({ onTicketCreated }) => {
         image,
         location,
         description,
+        created_by: userEmail,
       });
 
       onTicketCreated(ticket);
