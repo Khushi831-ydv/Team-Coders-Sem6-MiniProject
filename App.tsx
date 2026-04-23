@@ -186,7 +186,7 @@ const App: React.FC = () => {
 
             {isAgenticMode && user.role !== 'student' && (
               <div className="h-[400px] animate-in slide-in-from-left-4 duration-700">
-                <LiveAgentFeed isAgenticMode={isAgenticMode} />
+                <LiveAgentFeed isAgenticMode={isAgenticMode} tickets={tickets} />
               </div>
             )}
 
