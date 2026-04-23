@@ -1,62 +1,69 @@
-import {
-  Ticket,
-  TicketCreateRequest,
-  TicketIssueType,
-  TicketStatus,
-} from "../types";
+import { Ticket, TicketCreateRequest, TicketIssueType, TicketStatus } from '../types';
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const STORAGE_KEY = 'greenaudit_tickets';
+
+function load(): Ticket[] {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function save(tickets: Ticket[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+}
+
+function detectIssueType(filename: string, desc: string): TicketIssueType {
+  const t = `${filename} ${desc}`.toLowerCase();
+  if (/leak|water|pipe/.test(t))            return 'Water';
+  if (/light|bulb|electric/.test(t))        return 'Electricity';
+  if (/trash|waste|bin|overflow/.test(t))   return 'Waste';
+  return 'General';
+}
+
+function detectSeverity(filename: string, desc: string): 'Low' | 'Medium' | 'High' | 'Critical' {
+  const t = `${filename} ${desc}`.toLowerCase();
+  if (/broken|critical|burst/.test(t))      return 'Critical';
+  if (/leak|overflow|danger/.test(t))       return 'High';
+  if (/light|waste/.test(t))               return 'Medium';
+  return 'Low';
+}
+
+function toDataUrl(file: File): Promise<string> {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload  = () => res(reader.result as string);
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
 
 export async function createTicket(data: TicketCreateRequest): Promise<Ticket> {
-  const formData = new FormData();
-  formData.append("image", data.image);
-
-  if (data.location) formData.append("location", data.location);
-  if (data.description) formData.append("description", data.description);
-
-  const res = await fetch(`${API_BASE_URL}/report`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Create ticket failed:", errorText);
-    throw new Error("Failed to create ticket");
-  }
-
-  return await res.json();
+  const image_url   = await toDataUrl(data.image);
+  const issue_type  = detectIssueType(data.image.name, data.description || '');
+  const severity    = detectSeverity(data.image.name, data.description || '');
+  const tickets     = load();
+  const ticket: Ticket = {
+    id:          Date.now(),
+    image_url,
+    issue_type,
+    severity,
+    status:      'Unseen',
+    description: data.description || '',
+    location:    data.location    || '',
+    created_at:  new Date().toISOString(),
+  };
+  save([ticket, ...tickets]);
+  return ticket;
 }
 
 export async function fetchTickets(): Promise<Ticket[]> {
-  const res = await fetch(`${API_BASE_URL}/tickets`);
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Fetch tickets failed:", errorText);
-    throw new Error("Failed to fetch tickets");
-  }
-
-  return await res.json();
+  return load();
 }
 
 export async function updateTicket(
   id: number,
   updates: { issue_type?: TicketIssueType; status?: TicketStatus },
 ): Promise<Ticket> {
-  const res = await fetch(`${API_BASE_URL}/ticket/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(updates),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Update ticket failed:", errorText);
-    throw new Error("Failed to update ticket");
-  }
-
-  return await res.json();
+  const tickets = load().map(t => t.id === id ? { ...t, ...updates } : t);
+  save(tickets);
+  const updated = tickets.find(t => t.id === id);
+  if (!updated) throw new Error('Ticket not found');
+  return updated;
 }
