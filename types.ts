@@ -29,6 +29,26 @@ export interface SustainabilityReport {
 
 export type DashboardView = 'overview' | 'energy' | 'water-waste' | 'predictions' | 'admin';
 
+export type EcoSnapIssueType = 'Leak' | 'Lights ON waste' | 'Broken panel' | 'Waste overflow';
+export type EcoSnapSeverity  = 'Low' | 'Medium' | 'High' | 'Critical';
+
+export interface EcoSnapCreateRequest {
+  image: File;
+  location?: string;
+  note?: string;
+}
+
+export interface EcoSnapTicket {
+  id: number;
+  image_url: string;
+  issue_type: EcoSnapIssueType;
+  severity: EcoSnapSeverity;
+  location: string;
+  note: string;
+  alert_triggered: boolean;
+  created_at: string;
+}
+
 export type TicketIssueType = 'Water' | 'Electricity' | 'Waste' | 'General';
 export type TicketSeverity  = 'Low' | 'Medium' | 'High' | 'Critical';
 export type TicketStatus    = 'Unseen' | 'Acknowledged' | 'In Progress' | 'Resolved';
