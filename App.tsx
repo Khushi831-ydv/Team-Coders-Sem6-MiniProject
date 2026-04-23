@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from './components/Layout';
 import { DashboardCards } from './components/DashboardCards';
 import { MainOverviewChart, BuildingEfficiencyChart, PredictionChart } from './components/Charts';
@@ -8,13 +8,28 @@ import AdminPanel from './components/AdminPanel';
 import WaterWasteView from './components/WaterWasteView';
 import EnergyAnalysisView from './components/EnergyAnalysisView';
 import LiveAgentFeed from './components/LiveAgentFeed';
-import { DashboardView } from './types';
+import EcoSnap from './components/EcoSnap';
+import TicketList from './components/TicketList';
+import { DashboardView, Ticket, TicketIssueType, TicketStatus } from './types';
 import { INITIAL_DATA, PREDICTED_DATA } from './constants';
+import { fetchTickets, updateTicket } from './services/ticketService';
 import { Leaf, Info, Cpu, ShieldCheck, Zap } from 'lucide-react';
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<DashboardView>('overview');
   const [isAgenticMode, setIsAgenticMode] = useState(false);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+
+  useEffect(() => {
+    fetchTickets().then(setTickets).catch(() => {});
+  }, []);
+
+  const handleUpdateTicket = async (id: number, updates: { issue_type?: TicketIssueType; status?: TicketStatus }) => {
+    try {
+      const updated = await updateTicket(id, updates);
+      setTickets(prev => prev.map(t => t.id === id ? updated : t));
+    } catch {}
+  };
 
   const renderContent = () => {
     switch (activeView) {
@@ -142,6 +157,21 @@ const App: React.FC = () => {
                 </div>
                 <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl"></div>
               </div>
+            </div>
+
+            {/* Eco-Snap */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-slate-900">Eco-Snap Maintenance Reporting</h3>
+                <span className="px-4 py-1.5 rounded-full bg-slate-900 text-white text-sm font-semibold">
+                  {tickets.length} Tickets
+                </span>
+              </div>
+              <EcoSnap onTicketCreated={(t: Ticket) => setTickets((prev: Ticket[]) => [t, ...prev])} />
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+              <TicketList tickets={tickets} onUpdateTicket={handleUpdateTicket} />
             </div>
           </div>
         );
