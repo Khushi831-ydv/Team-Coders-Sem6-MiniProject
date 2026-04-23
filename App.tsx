@@ -11,6 +11,8 @@ import EnergyAnalysisView from './components/EnergyAnalysisView';
 import LiveAgentFeed from './components/LiveAgentFeed';
 import EcoSnap from './components/EcoSnap';
 import FloatingChatbot from './components/FloatingChatbot';
+import CarbonCalculator from './components/CarbonCalculator';
+import StudentLeaderboard from './components/StudentLeaderboard';
 import TicketList from './components/TicketList';
 import { DashboardView, AuthUser, Ticket, TicketIssueType, TicketStatus } from './types';
 import { INITIAL_DATA, PREDICTED_DATA } from './constants';
@@ -157,19 +159,28 @@ const App: React.FC = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold text-slate-900">Carbon Intensity Trend</h3>
-                <select className="bg-slate-50 border-none text-slate-500 text-sm font-medium rounded-lg focus:ring-emerald-500" disabled={user.role === 'student'}>
-                  <option>Last 12 Months</option>
-                  <option>Last Quarter</option>
-                  <option>Year to Date</option>
-                </select>
+            {user.role !== 'student' && (
+              <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-xl font-bold text-slate-900">Carbon Intensity Trend</h3>
+                  <select className="bg-slate-50 border-none text-slate-500 text-sm font-medium rounded-lg focus:ring-emerald-500">
+                    <option>Last 12 Months</option>
+                    <option>Last Quarter</option>
+                    <option>Year to Date</option>
+                  </select>
+                </div>
+                <div className="h-[300px]">
+                  <MainOverviewChart />
+                </div>
               </div>
-              <div className="h-[300px]">
-                <MainOverviewChart />
+            )}
+
+            {user.role === 'student' && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <CarbonCalculator />
+                <StudentLeaderboard tickets={tickets} currentUserEmail={user.email} />
               </div>
-            </div>
+            )}
 
             <AISuggestions isAgenticMode={isAgenticMode && user.role !== 'student'} />
 
