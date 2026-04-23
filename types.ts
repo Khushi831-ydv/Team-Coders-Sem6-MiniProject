@@ -31,6 +31,14 @@ export type DashboardView = 'overview' | 'energy' | 'water-waste' | 'predictions
 
 export type UserRole = 'student' | 'faculty' | 'admin';
 
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+  images: string[];
+  createdAt: string;
+}
+
 export interface AuthUser {
   email: string;
   role: UserRole;

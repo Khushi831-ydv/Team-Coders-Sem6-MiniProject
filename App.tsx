@@ -10,6 +10,7 @@ import WaterWasteView from './components/WaterWasteView';
 import EnergyAnalysisView from './components/EnergyAnalysisView';
 import LiveAgentFeed from './components/LiveAgentFeed';
 import EcoSnap from './components/EcoSnap';
+import FloatingChatbot from './components/FloatingChatbot';
 import TicketList from './components/TicketList';
 import { DashboardView, AuthUser, Ticket, TicketIssueType, TicketStatus } from './types';
 import { INITIAL_DATA, PREDICTED_DATA } from './constants';
@@ -292,16 +293,19 @@ const App: React.FC = () => {
   };
 
   return (
-    <Layout
-      activeView={activeView}
-      setActiveView={setActiveView}
-      isAgenticMode={isAgenticMode}
-      setIsAgenticMode={setIsAgenticMode}
-      user={user}
-      onLogout={handleLogout}
-    >
-      {renderContent()}
-    </Layout>
+    <>
+      <Layout
+        activeView={activeView}
+        setActiveView={setActiveView}
+        isAgenticMode={isAgenticMode}
+        setIsAgenticMode={setIsAgenticMode}
+        user={user}
+        onLogout={handleLogout}
+      >
+        {renderContent()}
+      </Layout>
+      <FloatingChatbot />
+    </>
   );
 };
 
