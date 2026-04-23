@@ -58,10 +58,18 @@ const CredentialsForm: React.FC<CredentialsFormProps> = ({ role, onBack, onLogin
   const [emailFocus, setEmailFocus] = useState(false);
   const [passFocus, setPassFocus] = useState(false);
 
+  const CREDENTIALS: Partial<Record<string, { email: string; password: string }>> = {
+    admin: { email: 'admin@krmu.in', password: '1234' },
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) { setError('Please fill in all fields.'); return; }
     if (!/\S+@\S+\.\S+/.test(email)) { setError('Please enter a valid email address.'); return; }
+    const creds = CREDENTIALS[role.id];
+    if (creds && (email !== creds.email || password !== creds.password)) {
+      setError('Invalid email or password.'); return;
+    }
     setError('');
     setLoading(true);
     setTimeout(() => {
