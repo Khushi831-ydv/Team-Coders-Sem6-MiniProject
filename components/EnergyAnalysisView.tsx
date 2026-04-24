@@ -6,6 +6,9 @@ import {
 } from 'recharts';
 import { Zap, Sun, Wind, Battery, Thermometer, Info, Settings2, Lightbulb, Activity, Cpu, Bot, X, LayoutGrid } from 'lucide-react';
 import { INITIAL_DATA, COLORS } from '../constants';
+import blockAImg from '../assets/blocks/A_block.jpeg';
+import blockBImg from '../assets/blocks/B_block.jpeg';
+import blockCImg from '../assets/blocks/C_block.jpeg';
 
 const ENERGY_SOURCES = [
   { name: 'Grid Power', value: 55, color: '#3b82f6' },
@@ -26,7 +29,7 @@ const PEAK_LOAD_DATA = [
 const BLOCKS = [
   {
     name: 'Block A',
-    image: 'https://images.unsplash.com/photo-1541888086225-ee5b99118e97?auto=format&fit=crop&q=80&w=800',
+    image: blockAImg,
     mainSource: 'Grid Power',
     icon: 'zap',
     stats: [
@@ -41,7 +44,7 @@ const BLOCKS = [
   },
   {
     name: 'Block B',
-    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800',
+    image: blockBImg,
     mainSource: 'Mixed',
     icon: 'sun',
     stats: [
@@ -56,7 +59,7 @@ const BLOCKS = [
   },
   {
     name: 'Block C',
-    image: 'https://images.unsplash.com/photo-1562516155-e0d1b4b5e8b1?auto=format&fit=crop&q=80&w=800',
+    image: blockCImg,
     mainSource: 'Transport & Grid',
     icon: 'zap',
     stats: [
@@ -137,9 +140,18 @@ const EnergyAnalysisView: React.FC<EnergyAnalysisViewProps> = ({ isAgenticMode =
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {BLOCKS.map((block, idx) => (
                 <div key={idx} className="bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all hover:border-indigo-100 group flex flex-col shadow-sm">
-                  <div className="h-40 w-full relative overflow-hidden bg-slate-200">
-                    <img src={block.image} alt={block.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur text-xs font-bold px-3 py-1.5 rounded-lg text-slate-700 shadow-sm">
+                  <div className="h-52 w-full relative overflow-hidden bg-slate-200">
+                    <img src={block.image} alt={block.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    {/* gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                    {/* block name bottom-left */}
+                    <div className="absolute bottom-3 left-4">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/70 mb-0.5">KR Mangalam University</p>
+                      <h3 className="text-lg font-extrabold text-white drop-shadow">{block.name}</h3>
+                    </div>
+                    {/* source badge top-right */}
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur text-xs font-bold px-3 py-1.5 rounded-lg text-slate-700 shadow-sm flex items-center gap-1.5">
+                      {block.icon === 'sun' ? <Sun className="w-3 h-3 text-amber-500" /> : <Zap className="w-3 h-3 text-blue-500" />}
                       {block.mainSource}
                     </div>
                   </div>
