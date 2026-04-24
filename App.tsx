@@ -10,6 +10,7 @@ import WaterWasteView from './components/WaterWasteView';
 import EnergyAnalysisView from './components/EnergyAnalysisView';
 import LiveAgentFeed from './components/LiveAgentFeed';
 import EcoSnap from './components/EcoSnap';
+import SustainabilityReports from './components/SustainabilityReports';
 import FloatingChatbot from './components/FloatingChatbot';
 import CarbonCalculator from './components/CarbonCalculator';
 import StudentLeaderboard from './components/StudentLeaderboard';
@@ -298,6 +299,8 @@ const App: React.FC = () => {
         return <EnergyAnalysisView isAgenticMode={isAgenticMode} />;
       case 'water-waste':
         return <WaterWasteView isAgenticMode={isAgenticMode} />;
+      case 'reports':
+        return <SustainabilityReports userRole={user.role} />;
       default:
         return <div>View not implemented</div>;
     }

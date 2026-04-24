@@ -27,7 +27,7 @@ export interface SustainabilityReport {
   yearOverYearChange: number;
 }
 
-export type DashboardView = 'overview' | 'energy' | 'water-waste' | 'predictions' | 'admin';
+export type DashboardView = 'overview' | 'energy' | 'water-waste' | 'predictions' | 'admin' | 'reports';
 
 export type UserRole = 'student' | 'faculty' | 'admin';
 

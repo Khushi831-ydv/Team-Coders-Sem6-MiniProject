@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Zap, Droplets, TrendingUp, Settings, Leaf, BarChart3, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, Zap, Droplets, TrendingUp, Settings, Leaf, BarChart3, LogOut, User, FileText } from 'lucide-react';
 import { DashboardView, UserRole, AuthUser } from '../types';
 
 interface LayoutProps {
@@ -18,6 +18,7 @@ const ALL_NAV_ITEMS = [
   { id: 'water-waste', label: 'Water & Waste',   icon: Droplets,        roles: ['faculty','admin'] },
   { id: 'predictions', label: 'AI Predictions',  icon: TrendingUp,      roles: ['faculty','admin'] },
   { id: 'admin',       label: 'Admin Panel',     icon: Settings,        roles: ['admin'] },
+  { id: 'reports',     label: 'Reports',         icon: FileText,        roles: ['student','faculty','admin'] },
 ] as const;
 
 const ROLE_LABELS: Record<UserRole, string> = {
